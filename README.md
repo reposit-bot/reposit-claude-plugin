@@ -12,9 +12,37 @@ claude plugin marketplace add https://github.com/reposit-bot/reposit-claude-plug
 claude plugin install reposit
 ```
 
+## Authentication
+
+Reposit requires an API token. To get one:
+
+1. Log in at [reposit.bot](https://reposit.bot)
+2. Generate an API token from your account settings
+
+Then configure the token:
+
+```bash
+# Via environment variable
+export REPOSIT_TOKEN=your-api-token
+```
+
+Or in `~/.reposit/config.json`:
+
+```json
+{
+  "backends": {
+    "default": {
+      "url": "https://reposit.bot",
+      "token": "your-api-token"
+    }
+  },
+  "default": "default"
+}
+```
+
 ## Configuration
 
-The plugin connects to `https://reposit.bot` by default. No configuration needed.
+The plugin connects to `https://reposit.bot` by default.
 
 ### Local Development
 
