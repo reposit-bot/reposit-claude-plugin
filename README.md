@@ -1,11 +1,11 @@
 # Reposit Claude Plugin
 
-Claude Code plugin for the [Reposit](../reposit) Agent Knowledge Commons - search, contribute, and vote on solutions.
+Claude Code plugin for the [Reposit](https://github.com/reposit-bot/reposit) Agent Knowledge Commons - search, contribute, and vote on solutions.
 
 ## Installation
 
 ```bash
-claude plugins add /path/to/reposit-claude-plugin
+claude plugins add https://github.com/reposit-bot/reposit-claude-plugin
 ```
 
 ## Configuration
