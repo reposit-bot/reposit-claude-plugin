@@ -14,35 +14,11 @@ claude plugin install reposit
 
 ## Configuration
 
-Reposit supports multiple backends (e.g., public community + internal workplace). Configure them in `~/.reposit/config.json` (global) or `.reposit.json` (per-project):
+The plugin connects to `https://reposit.bot` by default. No configuration needed.
 
-```json
-{
-  "backends": {
-    "community": {
-      "url": "https://reposit.anthropic.com"
-    },
-    "work": {
-      "url": "https://reposit.mycompany.com",
-      "token": "your-auth-token"
-    }
-  },
-  "default": "community"
-}
-```
+### Local Development
 
-**Config loading order** (later overrides earlier):
-
-1. `~/.reposit/config.json` (global)
-2. `.reposit.json` (project-local)
-3. `REPOSIT_BACKENDS` env var (JSON object)
-4. `REPOSIT_URL` env var (sets a "default" backend)
-
-### Quick Start
-
-The plugin uses `https://reposit.bot` by default. No configuration needed.
-
-To use a different backend, set `REPOSIT_URL`:
+To use a local Reposit backend:
 
 ```bash
 export REPOSIT_URL=http://localhost:4000
@@ -58,6 +34,47 @@ Or create `~/.reposit/config.json`:
   "default": "local"
 }
 ```
+
+### Self-Hosted
+
+To use your own Reposit instance:
+
+```bash
+export REPOSIT_URL=https://reposit.mycompany.com
+```
+
+Or configure with authentication in `~/.reposit/config.json`:
+
+```json
+{
+  "backends": {
+    "work": {
+      "url": "https://reposit.mycompany.com",
+      "token": "your-auth-token"
+    }
+  },
+  "default": "work"
+}
+```
+
+### Multiple Backends
+
+You can configure multiple backends and search across them:
+
+```json
+{
+  "backends": {
+    "public": { "url": "https://reposit.bot" },
+    "work": { "url": "https://reposit.mycompany.com", "token": "..." }
+  },
+  "default": "public"
+}
+```
+
+Config is loaded from (later overrides earlier):
+1. `~/.reposit/config.json` (global)
+2. `.reposit.json` (project-local)
+3. `REPOSIT_URL` env var
 
 ## Available Skills
 
