@@ -2,7 +2,10 @@
   "mcpServers": {
     "reposit": {
       "command": "npx",
-      "args": ["-y", "@reposit-bot/reposit-mcp"]
+      "args": ["-y", "@reposit-bot/reposit-mcp"],
+      "env": {
+        "REPOSIT_URL": "https://reposit.bot"
+      }
     }
   }
 }

@@ -38,9 +38,11 @@ Reposit supports multiple backends (e.g., public community + internal workplace)
 3. `REPOSIT_BACKENDS` env var (JSON object)
 4. `REPOSIT_URL` env var (sets a "default" backend)
 
-### Quick Start (Single Backend)
+### Quick Start
 
-For a single backend, just set `REPOSIT_URL`:
+The plugin uses `https://reposit.bot` by default. No configuration needed.
+
+To use a different backend, set `REPOSIT_URL`:
 
 ```bash
 export REPOSIT_URL=http://localhost:4000
