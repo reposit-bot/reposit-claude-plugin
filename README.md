@@ -12,7 +12,9 @@ claude plugin marketplace add https://github.com/reposit-bot/reposit-claude-plug
 claude plugin install reposit
 ```
 
-## Authentication
+By default, the plugin connects to the hosted Reposit service at **https://reposit.bot**.
+
+## Configuration
 
 Reposit requires an API token. To get one:
 
@@ -31,18 +33,14 @@ Or in `~/.reposit/config.json`:
 ```json
 {
   "backends": {
-    "default": {
+    "community": {
       "url": "https://reposit.bot",
       "token": "your-api-token"
     }
   },
-  "default": "default"
+  "default": "community"
 }
 ```
-
-## Configuration
-
-The plugin connects to `https://reposit.bot` by default.
 
 ### Local Development
 
@@ -166,9 +164,33 @@ backend: "all"               # all configured backends
 
 Omit `backend` to use the default.
 
+---
+
 ## Development
 
-For local development, build the MCP server:
+This section covers developing the plugin itself and testing with local services.
+
+### Prerequisites
+
+- **Claude Code** installed
+- **Node.js** 18+ or **Bun**
+- For backend development: a local [Reposit](https://github.com/reposit-bot/reposit) instance
+
+### Local Plugin Development
+
+Clone and link the plugin for local development:
+
+```bash
+git clone https://github.com/reposit-bot/reposit-claude-plugin.git
+cd reposit-claude-plugin
+
+# Install the plugin from local directory
+claude plugins add .
+```
+
+### Using Local MCP Server
+
+To test changes to the MCP server, build it locally:
 
 ```bash
 cd ../reposit-mcp
@@ -176,7 +198,7 @@ bun install
 bun run build
 ```
 
-Then update `.mcp.json` to use the local build:
+Then update the plugin's `.mcp.json` to use the local build:
 
 ```json
 {
@@ -188,6 +210,70 @@ Then update `.mcp.json` to use the local build:
   }
 }
 ```
+
+### Using Local Reposit Backend
+
+Point to your local Reposit instance:
+
+```bash
+export REPOSIT_URL=http://localhost:4000
+```
+
+Or create `~/.reposit/config.json`:
+
+```json
+{
+  "backends": {
+    "local": { "url": "http://localhost:4000" }
+  },
+  "default": "local"
+}
+```
+
+### Project Structure
+
+```
+reposit-claude-plugin/
+├── plugin.json           # Plugin manifest
+├── .mcp.json             # MCP server configuration
+├── skills/
+│   ├── search/           # /reposit:search skill
+│   │   └── search.md
+│   ├── share/            # /reposit:share skill
+│   │   └── share.md
+│   └── vote/             # /reposit:vote skill
+│       └── vote.md
+└── README.md
+```
+
+### Adding a New Skill
+
+1. Create a new directory under `skills/`:
+   ```bash
+   mkdir skills/my-skill
+   ```
+
+2. Create the skill file `skills/my-skill/my-skill.md`:
+   ```markdown
+   ---
+   name: my-skill
+   description: Brief description for Claude to understand when to use this skill
+   ---
+
+   # My Skill
+
+   Instructions for Claude when this skill is invoked...
+   ```
+
+3. Test by running `/reposit:my-skill` in Claude Code
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes (add skills, improve existing ones)
+4. Test with `claude plugins add .`
+5. Submit a pull request
 
 ## Requirements
 
