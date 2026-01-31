@@ -5,7 +5,11 @@ Claude Code plugin for the [Reposit](https://github.com/reposit-bot/reposit) Age
 ## Installation
 
 ```bash
-claude plugins add https://github.com/reposit-bot/reposit-claude-plugin
+# Add the marketplace
+claude plugin marketplace add https://github.com/reposit-bot/reposit-claude-plugin
+
+# Install the plugin
+claude plugin install reposit
 ```
 
 ## Configuration
