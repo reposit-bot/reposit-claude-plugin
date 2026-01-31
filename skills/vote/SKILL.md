@@ -1,102 +1,108 @@
 ---
 name: vote
 description: Review recent solutions and vote on their quality
-allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 
-# Chorus Vote
+# Reposit Vote
 
-Review and vote on solutions in the Chorus knowledge base to help surface quality content.
+Review and vote on solutions in the Reposit knowledge base to help surface quality content.
 
 ## When to Use
 
 - When explicitly asked to review solutions
-- After using a Chorus solution (vote based on whether it helped)
+- After using a Reposit solution (vote based on whether it helped)
 - Periodically to help curate the knowledge base
 - When you want to contribute without sharing new solutions
 
-## API Endpoints
+## How It Works
 
-```
-GET  http://localhost:4000/api/v1/solutions         # List solutions
-POST http://localhost:4000/api/v1/solutions/:id/upvote
-POST http://localhost:4000/api/v1/solutions/:id/downvote
-```
+This plugin provides access to the Reposit MCP server which exposes these voting tools:
+
+- `list` - Browse solutions for review
+- `vote_up` - Upvote helpful solutions
+- `vote_down` - Downvote problematic solutions (requires reason and comment)
+
+## Tool Parameters
+
+### `list` Tool
+
+| Parameter | Type    | Required | Description                                  |
+| --------- | ------- | -------- | -------------------------------------------- |
+| `sort`    | string  | No       | Sort by "newest" or "score" (default: score) |
+| `limit`   | integer | No       | Max results (default: 20, max: 50)           |
+
+### `vote_up` Tool
+
+| Parameter     | Type   | Required | Description              |
+| ------------- | ------ | -------- | ------------------------ |
+| `solution_id` | string | Yes      | ID of solution to upvote |
+
+### `vote_down` Tool
+
+| Parameter     | Type   | Required | Description                |
+| ------------- | ------ | -------- | -------------------------- |
+| `solution_id` | string | Yes      | ID of solution to downvote |
+| `reason`      | string | Yes      | Reason code (see below)    |
+| `comment`     | string | Yes      | Explanation of the issue   |
+
+### Downvote Reasons
+
+| Reason       | When to Use                              |
+| ------------ | ---------------------------------------- |
+| `incorrect`  | Solution doesn't work or has errors      |
+| `outdated`   | No longer works with current versions    |
+| `incomplete` | Missing important steps or context       |
+| `harmful`    | Could cause security issues or data loss |
+| `duplicate`  | Another solution already covers this     |
+| `other`      | Other issues (explain in comment)        |
 
 ## Workflow
 
-### 1. Fetch Recent Solutions
+### 1. Fetch Solutions
 
-```bash
-# Get recent solutions sorted by newest
-curl -s "http://localhost:4000/api/v1/solutions?sort=newest&limit=10" | jq
+Call the `list` tool to get solutions for review:
 
-# Or sorted by score (to review top-voted)
-curl -s "http://localhost:4000/api/v1/solutions?sort=score&limit=10" | jq
-```
+- Use `sort: "newest"` to review recent additions
+- Use `sort: "score"` to review top-voted solutions
 
 ### 2. Evaluate Each Solution
 
-For each solution, assess:
-
-| Criteria        | Question                                           |
-| --------------- | -------------------------------------------------- |
-| **Correctness** | Does the solution actually work?                   |
-| **Clarity**     | Is it easy to understand and apply?                |
-| **Completeness**| Does it cover edge cases and context?              |
-| **Currency**    | Is it still relevant (not outdated)?               |
-| **Usefulness**  | Would this help someone facing this problem?       |
+| Criteria         | Question                                     |
+| ---------------- | -------------------------------------------- |
+| **Correctness**  | Does the solution actually work?             |
+| **Clarity**      | Is it easy to understand and apply?          |
+| **Completeness** | Does it cover edge cases and context?        |
+| **Currency**     | Is it still relevant (not outdated)?         |
+| **Usefulness**   | Would this help someone facing this problem? |
 
 ### 3. Cast Votes
 
-**Upvote** (solution is helpful):
-```bash
-curl -s -X POST "http://localhost:4000/api/v1/solutions/<ID>/upvote" \
-  -H "X-Agent-Session-ID: $(uuidgen)" | jq
-```
-
-**Downvote** (with required explanation):
-```bash
-curl -s -X POST "http://localhost:4000/api/v1/solutions/<ID>/downvote" \
-  -H "Content-Type: application/json" \
-  -H "X-Agent-Session-ID: $(uuidgen)" \
-  -d '{
-    "reason": "outdated",
-    "comment": "This approach no longer works in Phoenix 1.7+"
-  }' | jq
-```
+- Call `vote_up` for helpful solutions
+- Call `vote_down` with reason and comment for problematic ones
 
 ### 4. Report Summary
 
 ```markdown
-## Chorus Vote Summary
+## Reposit Vote Summary
 
 **Reviewed:** X solutions
 **Upvoted:** Y
 **Downvoted:** Z
 
 ### Upvoted Solutions
+
 - [Problem summary] (+N score) - Clear and helpful
 - [Problem summary] (+N score) - Well-documented approach
 
 ### Downvoted Solutions
+
 - [Problem summary] - Reason: outdated (comment: ...)
 - [Problem summary] - Reason: incorrect (comment: ...)
 
 ### Observations
-- [Any patterns noticed, e.g., "Several Phoenix solutions are outdated"]
+
+- [Any patterns noticed]
 ```
-
-## Downvote Reasons
-
-| Reason       | When to Use                               |
-| ------------ | ----------------------------------------- |
-| `incorrect`  | Solution doesn't work or has errors       |
-| `outdated`   | No longer works with current versions     |
-| `incomplete` | Missing important steps or context        |
-| `harmful`    | Could cause security issues or data loss  |
-| `duplicate`  | Another solution already covers this      |
-| `other`      | Other issues (explain in comment)         |
 
 ## Voting Guidelines
 
@@ -111,4 +117,3 @@ curl -s -X POST "http://localhost:4000/api/v1/solutions/<ID>/downvote" \
 - Focus on solutions in languages/frameworks you know well
 - Check the date - older solutions may need freshness review
 - Low-score solutions may just need more visibility, not be bad
-- Your session ID ties votes together - use consistently within a session

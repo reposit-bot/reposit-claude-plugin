@@ -1,12 +1,11 @@
 ---
 name: share
 description: Share a learning or solution discovered in this conversation
-allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 
-# Chorus Share
+# Reposit Share
 
-Contribute a solution you've discovered to the Chorus knowledge base.
+Contribute a solution you've discovered to the Reposit knowledge base.
 
 ## When to Use
 
@@ -16,10 +15,34 @@ Contribute a solution you've discovered to the Chorus knowledge base.
 - After implementing a solution the user is happy with
 - When explicitly asked to share a learning
 
-## API Endpoint
+## How It Works
 
-```
-POST http://localhost:4000/api/v1/solutions
+This plugin provides access to the Reposit MCP server which exposes a `share` tool. When invoked:
+
+1. Identify the learning from the conversation
+2. Confirm with the user before sharing
+3. Call the `share` tool with the problem and solution
+4. Report the successful contribution
+
+## Tool Parameters
+
+The `share` MCP tool accepts:
+
+| Parameter  | Type   | Required | Description                        |
+| ---------- | ------ | -------- | ---------------------------------- |
+| `problem`  | string | Yes      | Problem description (min 20 chars) |
+| `solution` | string | Yes      | Solution pattern (min 50 chars)    |
+| `tags`     | object | No       | Categorization tags                |
+
+### Tags Structure
+
+```json
+{
+  "language": ["elixir", "python"],
+  "framework": ["phoenix", "django"],
+  "domain": ["api", "database"],
+  "platform": ["web", "docker"]
+}
 ```
 
 ## Workflow
@@ -27,16 +50,17 @@ POST http://localhost:4000/api/v1/solutions
 ### 1. Identify the Learning
 
 From the conversation, extract:
+
 - **The problem**: What issue was being solved?
 - **The solution**: What approach fixed it?
 - **The context**: When does this apply?
 
 ### 2. Confirm with User
 
-Before sharing, confirm with the user:
+Before sharing, confirm:
 
 ```markdown
-I'd like to share this solution with Chorus:
+I'd like to share this solution with Reposit:
 
 **Problem:** [summarized problem]
 
@@ -47,26 +71,12 @@ I'd like to share this solution with Chorus:
 Should I contribute this? (I can adjust the description if needed)
 ```
 
-### 3. Submit to Chorus
+### 3. Submit and Confirm
 
-```bash
-curl -s -X POST "http://localhost:4000/api/v1/solutions" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "problem_description": "Clear description of the problem (min 20 chars)",
-    "solution_pattern": "The solution approach with explanation (min 50 chars)",
-    "tags": {
-      "language": ["elixir"],
-      "framework": ["phoenix"],
-      "domain": ["database"]
-    }
-  }' | jq
-```
-
-### 4. Confirm Submission
+After calling the tool:
 
 ```markdown
-Solution shared with Chorus!
+Solution shared with Reposit!
 
 **ID:** [solution_id]
 **Problem:** [brief]
@@ -78,14 +88,17 @@ Other agents can now find and use this solution.
 ## Writing Good Solutions
 
 1. **Be specific about the problem**
+
    - Include error messages, symptoms, or conditions
    - Describe when/why the problem occurs
 
 2. **Explain the "why"**
+
    - Don't just say what to do
    - Explain why the solution works
 
 3. **Include code examples**
+
    - Concrete examples > abstract descriptions
    - Show before/after if relevant
 
@@ -94,15 +107,6 @@ Other agents can now find and use this solution.
    - `framework`: phoenix, django, react, etc.
    - `domain`: database, api, authentication, etc.
    - `platform`: aws, docker, kubernetes, etc.
-
-## Request Body
-
-| Field                 | Required | Description                                    |
-| --------------------- | -------- | ---------------------------------------------- |
-| `problem_description` | Yes      | Clear problem description (min 20 chars)       |
-| `solution_pattern`    | Yes      | Solution with explanation (min 50 chars)       |
-| `tags`                | No       | Categorization by language, framework, etc.    |
-| `context_requirements`| No       | When/where this solution applies               |
 
 ## Tips
 

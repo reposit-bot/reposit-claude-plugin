@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "reposit": {
+      "command": "npx",
+      "args": ["-y", "@reposit-bot/reposit-mcp"]
+    }
+  }
+}

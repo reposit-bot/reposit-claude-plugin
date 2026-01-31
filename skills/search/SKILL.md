@@ -1,12 +1,11 @@
 ---
 name: search
 description: Search for solutions related to the current problem or query
-allowed-tools: Bash, WebFetch, AskUserQuestion
 ---
 
-# Chorus Search
+# Reposit Search
 
-Search the Chorus knowledge base for solutions to problems you're facing.
+Search the Reposit knowledge base for solutions to problems you're facing.
 
 ## When to Use
 
@@ -15,48 +14,41 @@ Search the Chorus knowledge base for solutions to problems you're facing.
 - When the user asks "is there a better way to do X?"
 - When you want to check if a solution already exists
 
-## API Endpoint
+## How It Works
 
-```
-GET http://localhost:4000/api/v1/solutions/search
-```
+This plugin provides access to the Reposit MCP server which exposes a `search` tool. When invoked:
 
-## Workflow
+1. Extract the core problem from the conversation
+2. Call the `search` tool with an appropriate query
+3. Review the results and their scores
+4. Present findings to the user
 
-### 1. Extract the Problem
+## Tool Parameters
 
-From the conversation context, identify:
-- The core problem being faced
-- Relevant language/framework (for tag filtering)
-- Any specific error messages or symptoms
+The `search` MCP tool accepts:
 
-### 2. Search Chorus
+| Parameter | Type    | Required | Description                                            |
+| --------- | ------- | -------- | ------------------------------------------------------ |
+| `query`   | string  | Yes      | The search query describing the problem                |
+| `tags`    | object  | No       | Filter by tags (language, framework, domain, platform) |
+| `limit`   | integer | No       | Max results (default: 10, max: 50)                     |
 
-```bash
-curl -s "http://localhost:4000/api/v1/solutions/search?q=<URL_ENCODED_PROBLEM>&limit=5" | jq
-```
+## Evaluating Results
 
-With tag filtering:
-```bash
-curl -s "http://localhost:4000/api/v1/solutions/search?q=<PROBLEM>&required_tags=language:elixir,framework:phoenix" | jq
-```
+Check the score in the results:
 
-### 3. Evaluate Results
+- **High score (5+)**: Excellent match - community validated
+- **Medium score (1-4)**: Good match - worth reviewing
+- **Low/negative score**: May have issues - read carefully
 
-Check the `similarity` score:
-- **0.55+**: Excellent match - likely addresses the exact problem
-- **0.40-0.54**: Good match - worth reviewing
-- **0.25-0.39**: Partial match - may contain relevant patterns
-- **Below 0.25**: Weak match - refine your search
-
-### 4. Present Findings
+## Presenting Findings
 
 If good matches found:
+
 ```markdown
 ## Found Relevant Solutions
 
-### [Problem Description] (similarity: 0.XX)
-**Score:** +X (Y upvotes, Z downvotes)
+### [Problem Description] (Score: +X)
 
 **Solution:**
 [Solution pattern]
@@ -69,18 +61,10 @@ Would you like me to apply this approach?
 ```
 
 If no good matches:
+
 ```markdown
 No existing solutions found for this problem. I'll solve it from scratch.
 ```
-
-## Query Parameters
-
-| Parameter       | Required | Description                                      |
-| --------------- | -------- | ------------------------------------------------ |
-| `q`             | Yes      | Problem description (natural language)           |
-| `limit`         | No       | Max results (default: 10, max: 50)               |
-| `required_tags` | No       | Tags that must match (e.g., `language:elixir`)   |
-| `exclude_tags`  | No       | Tags to exclude                                  |
 
 ## Tips
 
