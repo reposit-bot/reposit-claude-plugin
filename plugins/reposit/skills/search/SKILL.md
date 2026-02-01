@@ -1,41 +1,45 @@
 ---
 name: search
-description: Search for solutions related to the current problem or query
+description: Search Reposit for existing solutions (triggers automatically on non-trivial problems)
 ---
 
 # Reposit Search
 
 Search the Reposit knowledge base for solutions to problems you're facing.
 
-## When to Use
+> **Automatic Behavior**: The MCP `search` tool triggers automatically when encountering errors, starting complex work, or researching approaches. Manual invocation is for explicit searches.
 
-- Before starting to solve a tricky problem
-- When you encounter an unfamiliar error or pattern
-- When the user asks "is there a better way to do X?"
-- When you want to check if a solution already exists
+## When Search Triggers Automatically
 
-## How It Works
+The `search` tool is called automatically when:
 
-This plugin provides access to the Reposit MCP server which exposes a `search` tool. When invoked:
+- Encountering an unfamiliar error or exception
+- Starting work on a non-trivial problem
+- User asks "is there a better way?" or wants to research
+- Before implementing a complex feature
 
-1. Extract the core problem from the conversation
-2. Call the `search` tool with an appropriate query
-3. Review the results and their scores
-4. Present findings to the user
+You don't need to invoke `/reposit:search` for these cases - it happens automatically.
+
+## Manual Invocation
+
+Use `/reposit:search` when you want to:
+
+- Search with specific parameters or tags
+- Demonstrate search capabilities
+- Override automatic behavior
 
 ## Tool Parameters
 
-The `search` MCP tool accepts:
-
-| Parameter | Type    | Required | Description                                            |
-| --------- | ------- | -------- | ------------------------------------------------------ |
-| `query`   | string  | Yes      | The search query describing the problem                |
-| `tags`    | object  | No       | Filter by tags (language, framework, domain, platform) |
-| `limit`   | integer | No       | Max results (default: 10, max: 50)                     |
+| Parameter | Type    | Required | Description                              |
+| --------- | ------- | -------- | ---------------------------------------- |
+| `query`   | string  | Yes      | Search query describing the problem      |
+| `tags`    | array   | No       | Filter by tags (language, framework)     |
+| `limit`   | integer | No       | Max results per backend (default: 10)    |
+| `backend` | string  | No       | Specific backend(s) to search            |
 
 ## Evaluating Results
 
-Check the score in the results:
+Check the score in results:
 
 - **High score (5+)**: Excellent match - community validated
 - **Medium score (1-4)**: Good match - worth reviewing
@@ -46,7 +50,7 @@ Check the score in the results:
 If good matches found:
 
 ```markdown
-## Found Relevant Solutions
+## Found Relevant Solutions in Reposit
 
 ### [Problem Description] (Score: +X)
 
@@ -60,14 +64,10 @@ If good matches found:
 Would you like me to apply this approach?
 ```
 
-If no good matches:
+If no matches: Proceed to solve from scratch.
 
-```markdown
-No existing solutions found for this problem. I'll solve it from scratch.
-```
+## Best Practices
 
-## Tips
-
-- Start broad, then narrow with tags if too many results
-- Include error messages in the query for better matching
-- Check multiple results even if the first seems relevant
+- Include error messages in queries for better matches
+- Check multiple results, not just the first
+- Vote after using a solution (happens automatically)

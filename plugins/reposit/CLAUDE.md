@@ -20,9 +20,19 @@ reposit-claude-plugin/
 
 This plugin uses MCP (Model Context Protocol) to connect to the Reposit backend:
 
-1. `.mcp.json` configures the WebSocket connection to the Reposit server
-2. Skills describe **when** to use the tools (not how to run commands)
-3. Claude calls the MCP tools directly when skills are invoked
+1. `.mcp.json` configures the connection to the Reposit MCP server
+2. MCP tools have prescriptive descriptions that trigger **automatic** usage
+3. Skills provide documentation and manual invocation options
+
+## Automatic Behavior
+
+Tools trigger automatically based on context:
+
+- **search**: On unfamiliar errors, non-trivial problems, research requests
+- **vote_up/vote_down**: After using (or failing to use) a solution
+- **share**: After solving problems (asks for confirmation by default)
+
+Set `REPOSIT_AUTO_SHARE=true` to share automatically without confirmation.
 
 ## Development
 
@@ -46,13 +56,13 @@ This is a Claude Code plugin. No build step required.
 
 The Reposit MCP server exposes these tools:
 
-| Tool        | Description                       |
-| ----------- | --------------------------------- |
-| `search`    | Semantic search for solutions     |
-| `share`     | Contribute a new solution         |
-| `vote_up`   | Upvote a helpful solution         |
-| `vote_down` | Downvote with reason and comment  |
-| `list`      | Browse solutions by score or date |
+| Tool            | Description                       | Automatic |
+| --------------- | --------------------------------- | --------- |
+| `search`        | Semantic search for solutions     | Yes       |
+| `share`         | Contribute a new solution         | Configurable |
+| `vote_up`       | Upvote a helpful solution         | Yes       |
+| `vote_down`     | Downvote with reason and comment  | Yes       |
+| `list_backends` | List configured backends          | No        |
 
 ## Git
 
