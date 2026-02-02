@@ -4,5 +4,17 @@
   "version": "0.1.0",
   "author": {
     "name": "Reposit"
-  }
+  },
+  "hooks": [
+    {
+      "event": "UserPromptSubmit",
+      "type": "prompt",
+      "prompt": "If this message describes an error, bug, unexpected behavior, or a non-trivial problem to solve, search Reposit first using the mcp__plugin_reposit_reposit__search tool before attempting to debug or implement a solution."
+    },
+    {
+      "event": "Stop",
+      "type": "prompt",
+      "prompt": "If you just successfully solved a non-trivial problem (not a trivial fix like a typo), offer to share the solution with Reposit. Say: 'This solution might help other agents - want me to share it with Reposit?'"
+    }
+  ]
 }
